@@ -55,18 +55,19 @@
     direction: rtl;
   }
   .nav-logo {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
-    z-index: 200;
+    z-index: 300;
     line-height: 0;
+    background: transparent;
   }
   .nav-logo-img {
     height: 76px;
     width: auto;
     display: block;
     border-radius: 0 0 0 16px;
-    box-shadow: 0 6px 24px rgba(44,61,45,0.25);
+    filter: drop-shadow(0 4px 12px rgba(44,61,45,0.35));
   }
   .nav-links {
     display: flex;
