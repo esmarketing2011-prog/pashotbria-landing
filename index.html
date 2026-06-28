@@ -202,7 +202,11 @@
     user-select: none;
   }
   .deco-leaf img { width: 100%; height: 100%; object-fit: contain; }
-  @media(max-width:768px){ .deco-leaf { display: none; } }
+  @media(max-width:768px){
+    .deco-leaf { opacity: 0.09; }
+    .deco-leaf[style*="width:260px"], .deco-leaf[style*="width:220px"] { width:110px !important; height:110px !important; }
+    .deco-leaf[style*="width:200px"], .deco-leaf[style*="width:180px"] { width:90px !important; height:90px !important; }
+  }
 
   /* ─── SECTION 1: HERO ─── */
   #hero {
