@@ -709,6 +709,7 @@
       url('healthy-bg.jpg') center/cover no-repeat;
     overflow: hidden;
   }
+  #testimonials .section-inner { max-width: 1200px; }
   .tslider-track {
     display: flex;
     gap: 20px;
@@ -1201,7 +1202,7 @@
       <p class="section-sub">למעלה מ-20,000 בוגרים כבר שינו את חייהם עם פשוט בריא</p>
     </div>
     <div class="tslider-outer">
-      <button class="tslider-btn" id="tPrev" onclick="tSlide(-1)" aria-label="הקודם">&#8592;</button>
+      <button class="tslider-btn" id="tPrev" aria-label="הקודם">&#8592;</button>
       <div class="tslider-wrapper">
       <div class="tslider-track" id="tslider">
       <div class="tcard">
@@ -1326,7 +1327,7 @@
       </div>
       </div>
     </div>
-      <button class="tslider-btn" id="tNext" onclick="tSlide(1)" aria-label="הבא">&#8594;</button>
+      <button class="tslider-btn" id="tNext" aria-label="הבא">&#8594;</button>
     </div>
     <!-- end tslider-outer -->
     <div class="tslider-nav">
@@ -1438,13 +1439,17 @@ document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
     function currentGroup() {
       const cardW = cards[0] ? cards[0].offsetWidth + 20 : 300;
       const vc = visibleCount();
-      return Math.round(track.scrollLeft / (cardW * vc));
+      // RTL: scrollLeft is negative, so use absolute value
+      return Math.round(Math.abs(track.scrollLeft) / (cardW * vc));
     }
 
     function goToGroup(g) {
       const cardW = cards[0] ? cards[0].offsetWidth + 20 : 300;
       const vc = visibleCount();
-      track.scrollTo({ left: g * cardW * vc, behavior: 'smooth' });
+      // RTL: scroll to negative value
+      const isRTL = getComputedStyle(track).direction === 'rtl';
+      const scrollVal = g * cardW * vc;
+      track.scrollTo({ left: isRTL ? -scrollVal : scrollVal, behavior: 'smooth' });
     }
 
     function updateDots() {
@@ -1458,11 +1463,14 @@ document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
     window.addEventListener('resize', buildDots);
     buildDots();
 
-    window.tSlide = function(dir) {
+    function tSlide(dir) {
       const g = currentGroup();
       const next = Math.max(0, Math.min(totalGroups() - 1, g + dir));
       goToGroup(next);
-    };
+    }
+    window.tSlide = tSlide;
+    document.getElementById('tPrev').addEventListener('click', () => tSlide(-1));
+    document.getElementById('tNext').addEventListener('click', () => tSlide(1));
   })();
 
 </script>
