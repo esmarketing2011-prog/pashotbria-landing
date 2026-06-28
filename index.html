@@ -47,35 +47,33 @@
     background: rgba(247,245,240,0.92);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(44,61,45,0.08);
-    padding: 14px 32px 14px 180px;
+    padding: 0 0 0 32px;
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 32px;
+    align-items: stretch;
+    justify-content: space-between;
   }
   .nav-logo {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--olive);
-    letter-spacing: -0.5px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 200;
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+    order: 3;
   }
   .nav-logo-img {
-    height: 80px;
+    height: 72px;
     width: auto;
     display: block;
     border-radius: 0 0 0 16px;
     box-shadow: 0 6px 24px rgba(44,61,45,0.25);
-    position: relative;
-    z-index: 200;
+    align-self: flex-start;
+    margin-bottom: -4px;
   }
   .nav-links {
     display: flex;
     gap: 28px;
     list-style: none;
+    align-items: center;
+    padding: 14px 0;
+    order: 2;
   }
   .nav-links a {
     font-size: 14px;
@@ -97,7 +95,8 @@
   .nav-cta:hover { background: var(--olive2) !important; }
   @media(max-width:768px){
     .nav-links { display: none; }
-    .nav { padding: 12px 20px; }
+    .nav { padding: 0 0 0 16px; }
+    .nav-logo-img { height: 56px; }
   }
 
   /* ─── SHARED ─── */
@@ -172,7 +171,7 @@
     max-width: 100%;
     margin: 0;
     display: grid;
-    grid-template-columns: 48% 52%;
+    grid-template-columns: 44% 56%;
     min-height: 78vh;
     align-items: center;
   }
