@@ -707,10 +707,6 @@
     background: var(--sage-mid);
     overflow: hidden;
   }
-  .tslider-wrapper {
-    position: relative;
-    margin-top: 40px;
-  }
   .tslider-track {
     display: flex;
     gap: 20px;
@@ -724,8 +720,9 @@
   .tslider-track::-webkit-scrollbar { display: none; }
   .tslider-track.dragging { cursor: grabbing; user-select: none; }
   .tcard {
-    flex: 0 0 calc(33.333% - 14px);
-    min-width: 280px;
+    flex: 0 0 auto;
+    width: calc((100% - 60px) / 4);
+    min-width: 160px;
     background: var(--white);
     border-radius: var(--radius-sm);
     padding: 28px 24px 22px;
@@ -766,13 +763,18 @@
     margin-top: 4px;
   }
   /* Navigation arrows */
-  .tslider-nav {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 24px;
+  .tslider-outer {
+    position: relative;
+    margin-top: 40px;
+    padding: 0 52px;
+  }
+  .tslider-wrapper {
+    overflow: hidden;
   }
   .tslider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -786,7 +788,10 @@
     font-size: 18px;
     transition: all 0.2s;
     line-height: 1;
+    z-index: 2;
   }
+  #tPrev { right: 0; }
+  #tNext { left: 0; }
   .tslider-btn:hover {
     background: var(--olive);
     color: var(--white);
@@ -795,12 +800,11 @@
     opacity: 0.3;
     cursor: default;
   }
-  .tslider-count {
-    font-size: 13px;
-    color: var(--text-light);
+  .tslider-nav {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 20px;
   }
   .tslider-dots {
     display: flex;
@@ -820,11 +824,14 @@
     width: 20px;
     border-radius: 4px;
   }
-  @media(max-width:900px){
-    .tcard { flex: 0 0 calc(50% - 10px); }
+  @media(max-width:1100px){
+    .tcard { width: calc((100% - 40px) / 3); }
   }
-  @media(max-width:600px){
-    .tcard { flex: 0 0 88%; }
+  @media(max-width:750px){
+    .tcard { width: calc((100% - 20px) / 2); }
+  }
+  @media(max-width:500px){
+    .tcard { width: 88%; }
   }
 
   /* ─── SECTION 8: FINAL CTA ─── */
@@ -1191,7 +1198,9 @@
       <h2 class="section-title">מה אומרים עלינו</h2>
       <p class="section-sub">למעלה מ-20,000 בוגרים כבר שינו את חייהם עם פשוט בריא</p>
     </div>
-    <div class="tslider-wrapper">
+    <div class="tslider-outer">
+      <button class="tslider-btn" id="tPrev" onclick="tSlide(-1)" aria-label="הקודם">&#8592;</button>
+      <div class="tslider-wrapper">
       <div class="tslider-track" id="tslider">
       <div class="tcard">
         <div class="tcard-quote">&ldquo;</div>
@@ -1315,10 +1324,11 @@
       </div>
       </div>
     </div>
-    <div class="tslider-nav">
-      <button class="tslider-btn" id="tPrev" onclick="tSlide(-1)" aria-label="הקודם">&#8592;</button>
-      <div class="tslider-dots" id="tDots"></div>
       <button class="tslider-btn" id="tNext" onclick="tSlide(1)" aria-label="הבא">&#8594;</button>
+    </div>
+    <!-- end tslider-outer -->
+    <div class="tslider-nav">
+      <div class="tslider-dots" id="tDots"></div>
     </div>
   </div>
 </section>
@@ -1387,14 +1397,29 @@ document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
       track.scrollLeft = scrollLeft - walk;
     });
 
-    // Dots
+    // Set card widths based on wrapper width
     const cards = track.querySelectorAll('.tcard');
     const visibleCount = () => {
       const w = track.offsetWidth;
-      if (w < 600) return 1;
-      if (w < 900) return 2;
-      return 3;
+      if (w < 500) return 1;
+      if (w < 750) return 2;
+      if (w < 1100) return 3;
+      return 4;
     };
+
+    function setCardWidths() {
+      const outer = document.querySelector('.tslider-outer');
+      const outerW = outer ? outer.offsetWidth : 860;
+      const btnW = 44 + 8; // button + gap
+      const trackW = outerW - (btnW * 2);
+      const vc = window.innerWidth < 500 ? 1 : window.innerWidth < 750 ? 2 : window.innerWidth < 1100 ? 3 : 4;
+      const gap = 20;
+      const cardW = Math.floor((trackW - gap * (vc - 1)) / vc);
+      cards.forEach(c => { c.style.width = cardW + 'px'; c.style.flex = '0 0 ' + cardW + 'px'; c.style.minWidth = '0'; });
+    }
+    // Run after layout is ready
+    requestAnimationFrame(() => { requestAnimationFrame(setCardWidths); });
+    window.addEventListener('resize', setCardWidths);
     const totalGroups = () => Math.ceil(cards.length / visibleCount());
 
     function buildDots() {
